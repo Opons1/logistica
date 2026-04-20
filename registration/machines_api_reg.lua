@@ -276,10 +276,28 @@ logistica.register_supplier(S("Passive Supplier Chest"), "passive_supplier", 16,
       "logistica_passive_supplier_front.png",
 })
 
+local col = "#383747"
+if core.get_modpath("moreores") then
+logistica.register_supplier(S("Passive Supplier Chest 2"), "passive_supplier2", 32, {
+    "logistica_passive_supplier_top.png^[multiply:"..col,
+    "logistica_passive_supplier_bottom.png^[multiply:"..col,
+    "logistica_passive_supplier_side.png^[transformFX^^[multiply:"..col,
+    "logistica_passive_supplier_side.png^[multiply:"..col,
+    "logistica_passive_supplier_side.png^[multiply:"..col,
+    "logistica_passive_supplier_front.png^[multiply:"..col
+})
+core.register_craft({
+  output = "logistica:passive_supplier2",
+  recipe = {
+    {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
+    {"moreores:mithril_ingot", "logistica:passive_supplier2", "moreores:mithril_ingot"},
+    {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
+  }
+})
+end
 --------------------------------
 -- Trashcan
 --------------------------------
-
 logistica.register_trashcan(S("Trashcan"), "trashcan", {
   "logistica_trashcan_top.png",
   "logistica_trashcan_bottom.png",

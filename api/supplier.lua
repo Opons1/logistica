@@ -6,19 +6,38 @@ local ON_OFF_BUTTON = "on_off_btn"
 local supplierForms = {}
 
 local function get_supplier_formspec(pos)
-  local posForm = "nodemeta:"..pos.x..","..pos.y..","..pos.z
-  local isOn = logistica.is_machine_on(pos)
+    local posForm = "nodemeta:"..pos.x..","..pos.y..","..pos.z
+    local isOn = logistica.is_machine_on(pos)
+    local inv_size = logistica.get_supplier_inv_size(pos)
+    local cols = 8
+    local total_rows = math.ceil(inv_size / cols)
+    local row_h = 1.25
+    local visible_rows = 2
+    local view_h = visible_rows * row_h
+    -- We multiply by 10 because the 'multiplier' in scroll_container is 0.1
+    local scroll_max = math.max(0, (total_rows * row_h) - view_h) * 10
 
-  return "formspec_version[4]" ..
-    "size["..logistica.inv_size(10.5, 10).."]" ..
-    logistica.ui.background..
-    logistica.ui.on_off_btn(isOn, logistica.inv_width - 1.5, 0.5, ON_OFF_BUTTON, FS("Allow Storing from Network"))..
-    "label[0.6,0.4;"..FS("Passive Supplier\nItems become available to network requests.").."]"..
-    "list["..posForm..";main;0.4,1.4;8,2;0]"..
-    logistica.player_inv_formspec(0.4,4.5)..
-    "listring[current_player;main]"..
-    "listring["..posForm..";main]"
+    return "formspec_version[4]" ..
+        "size[11, 10]" ..
+        logistica.ui.background ..
+        logistica.ui.on_off_btn(isOn, 6.5, 0.5, ON_OFF_BUTTON, FS("Allow Storing from Network")) ..
+        "label[0.6,0.4;"..FS("Passive Supplier ("..inv_size.." slots)\nItems become available to network requests").."]" ..
+        
+        "scrollbaroptions[max="..scroll_max..";thumbsize=20]" .. 
+        "scrollbar[10.4,1.4;0.4,"..view_h..";vertical;inv_scroll;0]" ..
+        
+        -- 4. Scroll Container
+        "scroll_container[0.2,1.4;10.2,"..view_h..";inv_scroll;vertical;0.1]" ..
+            "list["..posForm..";main;0,0;"..cols..","..total_rows..";0]" ..
+        "scroll_container_end[]" ..
+        
+        logistica.player_inv_formspec(0.4, 4.8) ..
+        "listring[current_player;main]" ..
+        "listring["..posForm..";main]"
 end
+
+
+
 
 local function show_supplier_formspec(playerName, pos)
   supplierForms[playerName] = {position = pos}
