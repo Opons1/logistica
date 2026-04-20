@@ -281,7 +281,7 @@ if core.get_modpath("moreores") then
 logistica.register_supplier(S("Passive Supplier Chest 2"), "passive_supplier2", 32, {
     "logistica_passive_supplier_top.png^[multiply:"..col,
     "logistica_passive_supplier_bottom.png^[multiply:"..col,
-    "logistica_passive_supplier_side.png^[transformFX^^[multiply:"..col,
+    "logistica_passive_supplier_side.png^[multiply:"..col,
     "logistica_passive_supplier_side.png^[multiply:"..col,
     "logistica_passive_supplier_side.png^[multiply:"..col,
     "logistica_passive_supplier_front.png^[multiply:"..col
