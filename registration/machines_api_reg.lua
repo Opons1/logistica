@@ -155,7 +155,7 @@ local function imp_tiles(name) return {
 } end
 
 logistica.register_injector(S("Slow Network Importer\nImports 10 items at a time"), "injector_slow", 10, imp_tiles("item"))
-logistica.register_injector(S("Fast Network Importer\nImports 99 items at a time"), "injector_fast", 99, imp_tiles("stack"))
+logistica.register_injector(S("Fast Network Importer\nImports 200 items at a time"), "injector_fast", 200, imp_tiles("stack"))
 
 --------------------------------
 -- Item Storage
