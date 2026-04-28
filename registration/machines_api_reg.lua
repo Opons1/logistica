@@ -290,7 +290,7 @@ core.register_craft({
   output = "logistica:passive_supplier2",
   recipe = {
     {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
-    {"moreores:mithril_ingot", "logistica:passive_supplier2", "moreores:mithril_ingot"},
+    {"moreores:mithril_ingot", "logistica:passive_supplier", "moreores:mithril_ingot"},
     {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
   }
 })
