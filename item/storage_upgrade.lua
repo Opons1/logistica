@@ -17,6 +17,19 @@ items["logistica:storage_upgrade_2"]= {
   stack_max = logistica.stack_max,
 }
 
+items["logistica:storage_upgrade_3"]= {
+  description = S("Mithril Storage Upgrade\nAdds 2048 Mass Storage Slot Capacity"),
+  storage_upgrade = 2048,
+  inventory_image = "logistica_storage_upgrade_3.png",
+  stack_max = logistica.stack_max,
+}
+
+items["logistica:storage_upgrade_4"]= {
+  description = S("Storage Upgrade Array\nAdds 4096 Mass Storage Slot Capacity"),
+  storage_upgrade = 4096,
+  inventory_image = "logistica_storage_upgrade_4.png",
+  stack_max = logistica.stack_max,
+}
 --------------------------------
 -- registration
 --------------------------------
