@@ -41,13 +41,6 @@ items["logistica:autocrafting_recursive_upgrade"] = {
   stack_max = 1,
 }
 
-items["logistica:storage_upgrade_multiplier"] = {
-  description = S("Mass Storage Capacity Multiplier\nMultiplies Mass Storage Slot Capacity by 16\nOnly 1 can be inserted per Mass Storage"),
-  storage_multiplier = 16,
-  inventory_image = "logistica_storage_upgrade_multiplier.png",
-  stack_max = logistica.stack_max,
-}
-
 --------------------------------
 -- registration
 --------------------------------

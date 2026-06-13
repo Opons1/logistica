@@ -23,3 +23,6 @@ dofile(logistica.MODPATH.."/api/api.lua")
 dofile(logistica.MODPATH.."/registration/registration.lua")
 dofile(logistica.MODPATH.."/guide_api/guide_api.lua")
 dofile(logistica.MODPATH.."/guide/guide.lua")
+
+--to make merging not an absolute nightmare
+dofile(logistica.MODPATH.."/opw.lua")
