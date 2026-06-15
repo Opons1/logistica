@@ -19,7 +19,7 @@ items["logistica:storage_upgrade_4"]= {
 }
 
 items["logistica:storage_upgrade_multiplier"] = {
-  description = S("Mass Storage Capacity Multiplier\nMultiplies Mass Storage Slot Capacity by 16\nOnly 1 can be inserted per Mass Storage"),
+  description = S("Mass Storage Capacity Multiplier\nMultiplies Mass Storage Slot Capacity by 5\nOnly 1 can be inserted per Mass Storage"),
   storage_multiplier = 5,
   inventory_image = "logistica_storage_upgrade_multiplier.png",
   stack_max = logistica.stack_max,
