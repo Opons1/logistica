@@ -559,7 +559,10 @@ function logistica.access_point_queue_timer(pos)
       local pending = meta:get_string("ac_pending_output")
       if pending ~= "" then
         meta:set_string("ac_pending_output", "")
-        meta:get_inventory():add_item(AC_OUTPUT_LIST, ItemStack(pending))
+        local leftover = meta:get_inventory():add_item(AC_OUTPUT_LIST, ItemStack(pending))
+        if not leftover:is_empty() then
+          minetest.item_drop(leftover, nil, pos)
+        end
       end
       for _, pData in pairs(accessPointForms) do
         if vector.equals(pData.position, pos) then
@@ -696,7 +699,7 @@ local function get_autocrafting_tab_content(pos, playerName)
       add("label[6.6,0.95;"..minetest.formspec_escape(entry.desc).."]")
 
       -- 3x3 recipe grid: colored box behind each occupied slot
-      local slot_display = logistica.ac_get_recipe_slot_display(recipe, network, cur_player)
+      local slot_display = network and logistica.ac_get_recipe_slot_display(recipe, network, cur_player) or {}
       for i = 1, 9 do
         local col  = (i - 1) % 3
         local row  = math.floor((i - 1) / 3)
@@ -1142,7 +1145,7 @@ function logistica.access_point_allow_take(inv, listname, index, _stack, player)
         return 0
       end
       -- remove the sometimes manually added count display - and set the stack in the inventory slot
-      taken:get_meta():set_string("count_meta", nil)
+      taken:get_meta():set_string("count_meta", "")
       inv:set_stack(listname, index, taken)
       return math.min(taken:get_count(), stackMax)
     else -- individual items are trickier
@@ -1160,7 +1163,7 @@ function logistica.access_point_allow_take(inv, listname, index, _stack, player)
         return 0
       end
       -- remove the sometimes manually added count display - and set the stack in the inventory slot
-      taken:get_meta():set_string("count_meta", nil)
+      taken:get_meta():set_string("count_meta", "")
       inv:set_stack(listname, index, taken)
       return taken:get_count()
     end
