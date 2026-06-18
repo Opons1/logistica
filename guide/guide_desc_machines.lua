@@ -103,6 +103,12 @@ Handles normal crafting grid recipes only. It is most useful when crafting compl
 
 The Recursive Crafting Upgrade can replace the regular Access Point Crafting Upgrade; you do not need both.
 
+Synchronizing the Recursive Upgrade
+------------------------------
+The Recursive Crafting Upgrade can be Synchronized using the Wireless Upgrader. A Synchronized upgrade allows the Easy Crafting tab to be used remotely through a Wireless Access Pad. Without synchronization, the Easy Crafting tab is only available when opening the Access Point directly.
+
+Synchronizing requires two separate upgrades in the Wireless Upgrader - match the waves once to partially synchronize, and a second time to fully synchronize the upgrade.
+
 History navigation
 ------------------------------
 The [ < ] and [ > ] buttons navigate back and forward through recipes you have viewed, similar to browser history. Clicking an ingredient in the recipe grid also navigates to that ingredient's own recipe.
@@ -110,6 +116,8 @@ The [ < ] and [ > ] buttons navigate back and forward through recipes you have v
 Wireless Access Pad
 ------------------------------
 When accessing the Easy Crafting tab through a Wireless Access Pad, the upgrade slot is hidden. The upgrade must be inserted by opening the Access Point directly.
+
+The Easy Crafting tab is only available via Wireless Access Pad if the Access Point has a Synchronized Recursive Crafting Upgrade installed.
 
 Recipe limitations
 ------------------------------
@@ -156,6 +164,8 @@ To upgrade a Wireless Access Pad:
 5. When they match, the wave turns Green and an Upgrade button appears.
 6. Press the Upgrade button to increase your Wireless Access Pad's range.
 
+The Wireless Upgrader can also synchronize a Recursive Crafting Upgrade. Place the upgrade in the bottom slot instead of a Wireless Access Pad, match the waves twice to fully synchronize it. A Synchronized upgrade allows Easy Crafting to be used remotely via a Wireless Access Pad.
+
 The Wireless Upgrader also has a "Hard Mode" toggleable via settings - see the "Server Settings" page on the left for info.
 ]])
 
@@ -168,6 +178,7 @@ You can collectively access all Mass Storage on a particular network from an Acc
 - Can be upgraded to increase inventory size, up to a maximum of 65,535 per slot
 - Select Front Image: selects a stored item to display on the front of the storage node
 - Can quickly deposit items by punching it with a stack, or sneak-punching to deposit all matching stacks from your inventory
+- A Deposit button appears when at least one filter slot is configured, allowing you to deposit all matching items from your inventory into the storage
 
 Each storage slot has a Configure button (the small button below each slot). Pressing it opens the slot config:
 
@@ -197,6 +208,10 @@ Two toggles control what may store items into the chest:
 - Allow Storing from Access Point: when enabled, items inserted via an Access Point are stored here if there is no other suitable storage.
 
 Both are enabled by default. Disabling both effectively makes the chest read-only from the network's point of view, supplying items out but accepting nothing in automatically.
+
+A filter list of 8 slots controls which items are allowed to be stored into the chest. If the filter is empty, any item is accepted. If one or more items are placed in the filter, only those items can be stored - both by machines and by the Access Point.
+
+When the filter is not empty, a Deposit button appears. Clicking it will move all matching items from your inventory into the chest.
 ]])
 
 g.network_importer = S([[
@@ -238,7 +253,7 @@ To use an Inserter, you must:
 
 - Place it facing a node that has an inventory it can target. Sneak + punching an inserter will show its output location.
 - Pick an inventory to place items into. Some nodes have multiple input inventories (e.g. a furnace).
-- Place items in the 4 filter slots to set which item types to request. Each slot holds 1 item to identify the type.
+- Place items in the 8 filter slots to set which item types to request. Each slot holds 1 item to identify the type.
 - Set the "Request up to" amount below each filter slot. This is the target count to keep in the destination inventory. Setting it to 0 disables that slot.
 - Make sure you press the Enable button to enable operation.
 
@@ -385,6 +400,8 @@ The Vacuum Supply Chest acts like a regular Supply chest, providing items to the
 - It cannot be used by the Network to store items in it (unlike regular Supply Chests which can be configured to allow storing from the Network)
 
 The on/off switch in the Vacuum Chests's inventory enables whether the chest will be collecting nearby items or not.
+
+The Vacuum Chest also has a filter row. If any filter slots are filled, the chest will only pick up items matching those filters. If all filter slots are empty, the chest will pick up all nearby items.
 ]])
 
 g.rock_melter = S([[

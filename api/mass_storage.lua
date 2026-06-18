@@ -145,7 +145,44 @@ local function formspec_get_cfg_buttons()
   return result
 end
 
+local SLOT_X      = 1.36
+local SLOT_W      = 1.25
+local SLOT_Y      = 1.9
+local SLOT_H      = 1.0
+local BAR_W       = 0.1
+local BAR_COLOR   = "#229922"
+local BAR_BG      = "#000000"
+
+local function formspec_get_fill_bars(pos, meta)
+  local maxSize = logistica.get_mass_storage_max_size(pos)
+  if not maxSize or maxSize <= 0 then return "" end
+  local inv = meta:get_inventory()
+  local result = ""
+  for i = 1, 8 do
+    local bx   = SLOT_X + (i - 1) * SLOT_W + SLOT_W - BAR_W - 0.01
+    local count = inv:get_stack("storage", i):get_count()
+    local fill  = math.min(count / maxSize, 1.0)
+    local fillH = fill * SLOT_H
+    result = result .. "box[" .. bx .. "," .. SLOT_Y .. ";" .. BAR_W .. "," .. SLOT_H .. ";" .. BAR_BG .. "]"
+    if fillH > 0 then
+      local fy = SLOT_Y + SLOT_H - fillH
+      result = result .. "box[" .. bx .. "," .. fy .. ";" .. BAR_W .. "," .. fillH .. ";" .. BAR_COLOR .. "]"
+    end
+  end
+  return result
+end
+
 -- `meta` is optional
+local function mass_storage_has_filter(pos)
+  local inv = minetest.get_meta(pos):get_inventory()
+  local filterList = inv:get_list("filter")
+  if not filterList then return false end
+  for _, stack in ipairs(filterList) do
+    if not stack:is_empty() then return true end
+  end
+  return false
+end
+
 local function get_mass_storage_formspec(pos, numUpgradeSlots, optionalMeta)
   local posForm = "nodemeta:"..pos.x..","..pos.y..","..pos.z
   local upgradeInvString = upgrade_inv(posForm, numUpgradeSlots, 3.8)
@@ -154,6 +191,12 @@ local function get_mass_storage_formspec(pos, numUpgradeSlots, optionalMeta)
   local imgPickX = 1.65
   local imgPickY = 0.1
   local swapButtonsString = upgrade_swap_buttons(pos, numUpgradeSlots, 3.8)
+  local hasFilter = mass_storage_has_filter(pos)
+  local depositBtn = ""
+  if hasFilter then
+    depositBtn = "button[3.0,3.9;2.0,0.75;deposit;"..FS("Deposit").."]"..
+      "tooltip[deposit;"..FS("Deposit all filtered items from inventory into storage").."]"
+  end
   return "formspec_version[4]"..
     "size["..logistica.inv_size(12, 11.5).."]" ..
     logistica.ui.background..
@@ -167,6 +210,7 @@ local function get_mass_storage_formspec(pos, numUpgradeSlots, optionalMeta)
     "image[0.2,3.8;1,1;logistica_icon_input.png]" ..
     formspec_get_image_pickers(imgPickX, imgPickY, selectedImgIndex, meta)..
     formspec_get_cfg_buttons()..
+    formspec_get_fill_bars(pos, meta)..
     "listring[current_player;main]"..
     "listring["..posForm..";main]"..
     "listring["..posForm..";storage]"..
@@ -175,6 +219,7 @@ local function get_mass_storage_formspec(pos, numUpgradeSlots, optionalMeta)
     "listring[current_player;main]"..
     upgradeInvString..
     swapButtonsString..
+    depositBtn..
     "label[1.55,5.15;"..FS("Slot Storage Capacity: ")..logistica.get_mass_storage_max_size(pos).."]"..
     "tooltip[0.25,1.9;1,1;"..STORAGE_TOOLTIP.."]"..
     "tooltip[0.2,3.8;1,1;"..INPUT_TOOLTIP.."]"..
@@ -325,6 +370,9 @@ local function on_receive_storage_formspec(player, formname, fields)
   if fields.quit and not fields.key_enter_field then
     logistica.update_mass_storage_front_image(pos)
     storageForms[playerName] = nil
+  elseif fields.deposit then
+    logistica.mass_storage_deposit_from_player(pos, playerName)
+    show_mass_storage_formspec(pos, playerName)
   else
     for i = 1, 8 do
       if fields["ico"..i] then
@@ -505,6 +553,7 @@ local function on_mass_storage_inv_put(pos, listname, index, stack, player)
         fullstack:set_count(fullstack:get_count() - taken)
       end
       inv:set_stack(listname, index, fullstack)
+      refresh_mass_storage_forms(pos)
     end
   elseif listname == "upgrade" then
     local inv = minetest.get_meta(pos):get_inventory()
@@ -534,6 +583,8 @@ end
 local function on_mass_storage_inv_take(pos, listname, index, stack, player)
   if listname == "upgrade" then
     logistica.on_mass_storage_upgrade_change(pos, stack:get_name(), false)
+    refresh_mass_storage_forms(pos)
+  elseif listname == "storage" then
     refresh_mass_storage_forms(pos)
   end
 end

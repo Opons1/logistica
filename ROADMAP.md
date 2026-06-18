@@ -45,27 +45,25 @@
 - Upgrade recipes for Importer and Requester -- DONE
 ### Maybe
 - Lava generator - but slow -- DONE (Rock Melter: logistica:rock_melter; read-only lava reservoir on the network)
-- Mass Storage - filled up indicators
-- Passive Supply Chest - allow storing rules (e.g. whitelist items allowed to be stored in it)
-- Vacuum Chest - add pushing option
+- Mass Storage - filled up indicators -- DONE
+- Passive Supply Chest - allow storing rules (e.g. whitelist items allowed to be stored in it) -- DONE
+- Vacuum Chest - add pushing option -- not going to implement
 - Signal sender: Network content (#liquid) -- DONE (signal_liquid_counter: prev/next liquid selector with texture + curr/max display, >=/<= condition, bucket threshold, named signal; empty signal name = no send)
 - Signal sender: Digiline output -- EXPERIMENTAL (digiline_sender: polls network every 1s, 8 item filter slots, signal monitoring, freeform message template with %sN/%iM placeholders, optional parse-as-table, Help tab with examples; requires digilines mod)
 - Signal receiver: Digiline input -- DONE (digiline_receiver: translate incoming digiline message on a channel to a logistica on/off signal; simpler than sender)
-- Signal receiver: Display Unit
+- Signal receiver: Display Unit -- DONE
 - Signal Monitor -- DONE (logistica:signal_monitor; logic/signal_monitor.lua + api/signal_monitor.lua; live signal list with ON/OFF state, per-signal sender detail panel with chat-send on click, search filter, live update mode, per-network state persistence in memory)
 - Automatic Packer + Unpacker - detect crafting loops (e.g. 9 ingots = 1 block = 9 ingots) at load time, make a machine that enables that conversion by default on a network
-- Filters on Vacuum chest
+- Filters on Vacuum chest -- DONE
 - Access Point
   - Add tabs to access point -- DONE (Items tab + Storage Management tab)
   - Add advanced autocrafting -- DONE (Easy Crafting tab: search, recipe view, basic craft to ac_output, recursive craft with queue display; two upgrade tiers: autocrafting_upgrade / autocrafting_recursive_upgrade)
   - Make allocating mass storage slots possible from access point -- DONE (Storage Management tab)
 - Item monitoring station -- DONE (logistica:item_monitor; logic/item_monitor.lua + api/item_monitor.lua; tracks up to 8 items, configurable interval, rolling graph with per-point tooltips, monitor-stand nodebox, custom textures)
-- Digilines compat
-- On-demand node-breaker
-- On-demand node cracker
-- Node placer
-- Named interactors?
-  - Allow you to remotely place and get things from other blocks, e.g. furnaces
+- Digilines compat -- DONE
+- On-demand node-breaker -- DONE
+- On-demand node cracker -- out of scope
+- Node placer -- DONE
 - Network Bridge Provider + Network Bridge Receiver
   - Provider has push mode or passive supply mode; faces the Receiver (backsides touching)
   - Receiver connects to the Provider and either fulfils requests or accepts pushed items
@@ -79,10 +77,11 @@
   - Non-network machines (Disassembler, Autocrafter) fall back to area-protection-only
 
 ## Low priority
+- Named interactors - allow you to remotely place and get things from other blocks, e.g. furnaces
 - Add compatibility with on_move_node - used by mods that teleport nodes
 
 ## Other changes to consider
 - Direct pipeworks compatibility
 - Direct tubelib compatibility
 - API improvements
-- Rework old UI icons to be.. 48x48? 64x64? something else?
+- Rework old UI icons to be.. 48x48? 64x64? something else? -- DONE
