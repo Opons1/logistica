@@ -4,6 +4,20 @@ local function L(s) return "logistica:"..s end
 logistica.craftitem.storage_upgrade = {}
 local items = logistica.craftitem.storage_upgrade
 
+items["logistica:storage_upgrade_1"] = {
+  description = S("Silverin Storage Upgrade\nAdds 512 Mass Storage Slot Capacity"),
+  storage_upgrade = 512,
+  inventory_image = "logistica_storage_upgrade_1.png",
+  stack_max = logistica.stack_max,
+}
+
+items["logistica:storage_upgrade_2"]= {
+  description = S("Diamond Storage Upgrade\nAdds 1024 Mass Storage Slot Capacity"),
+  storage_upgrade = 1024,
+  inventory_image = "logistica_storage_upgrade_2.png",
+  stack_max = logistica.stack_max,
+}
+
 items["logistica:storage_upgrade_3"]= {
   description = S("Mithril Storage Upgrade\nAdds 2048 Mass Storage Slot Capacity"),
   storage_upgrade = 2048,
@@ -78,5 +92,14 @@ core.register_craft({
     {"technic_many_machines:radiant_alloy_ingot", L("standing_wave_box"), "technic_many_machines:radiant_alloy_ingot"},
     {L("storage_upgrade_3"), "default:mese_crystal",  L("storage_upgrade_3")},
     {"technic_many_machines:radiant_alloy_ingot", L("standing_wave_box"),  "technic_many_machines:radiant_alloy_ingot"},
+  }
+})
+
+core.register_craft({
+  output = "logistica:storage_upgrade_multiplier",
+  recipe = {
+    {"nyancat:nyancat_rainbow", "legendary_ore:legendary_ore", "nyancat:nyancat_rainbow"},
+    {"nyancat:nyancat_rainbow", "logistica:storage_upgrade_3", "nyancat:nyancat_rainbow"},
+    {"nyancat:nyancat_rainbow", "legendary_ore:legendary_ore", "nyancat:nyancat_rainbow"},
   }
 })
