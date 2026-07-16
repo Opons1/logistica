@@ -58,7 +58,7 @@ logistica.register_supplier(S("Passive Supplier Chest"), "passive_supplier", 32,
 })
 
 if core.get_modpath("moreores") then
-logistica.register_supplier(S("Passive Supplier Chest 2"), "passive_supplier2", 48, {
+logistica.register_supplier(S("Passive Supplier Chest 2"), "passive_supplier2", 64, {
     "logistica_passive_supplier_top_2.png",
     "logistica_passive_supplier_bottom_2.png",
     "logistica_passive_supplier_side_2.png",
@@ -69,9 +69,9 @@ logistica.register_supplier(S("Passive Supplier Chest 2"), "passive_supplier2", 
 core.register_craft({
   output = "logistica:passive_supplier2",
   recipe = {
-    {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
+    {"logistica:hardened_silverin_block", "moreores:mithril_ingot", "logistica:hardened_silverin_block"},
     {"moreores:mithril_ingot", "logistica:passive_supplier", "moreores:mithril_ingot"},
-    {"moreores:mithril_ingot", "moreores:mithril_ingot", "moreores:mithril_ingot"},
+    {"logistica:hardened_silverin_block", "moreores:mithril_ingot", "logistica:hardened_silverin_block"},
   }
 })
 end
