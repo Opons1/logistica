@@ -2,6 +2,7 @@
 logistica.TRANSLATOR = minetest.get_translator(logistica.MODNAME)
 
 local META_ON_OFF_KEY = "logonoff"
+local META_INFINITE_KEY = "loginfinite"
 
 local charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 local function rand_str(length, seed)
@@ -45,8 +46,11 @@ end
 -- The player object is resolved internally and only used where available.
 -- Returns true on success, false on failure.
 function logistica.place_node(pos, node, playerName)
-  local player = (playerName and playerName ~= "")
-    and minetest.get_player_by_name(playerName) or nil
+  local player = nil
+  if playerName and playerName ~= "" then
+    player = minetest.get_player_by_name(playerName)
+      or logistica.create_fake_player(playerName, pos, {wielded_item = ItemStack(node.name)})
+  end
 
   logistica.load_position(pos)
 
@@ -116,8 +120,11 @@ end
 -- Does NOT apply tool wear (matching the signal digger's existing design).
 -- Returns the list of dropped ItemStacks, or nil on failure.
 function logistica.dig_node(pos, node, playerName, toolStack)
-  local player = (playerName and playerName ~= "")
-    and minetest.get_player_by_name(playerName) or nil
+  local player = nil
+  if playerName and playerName ~= "" then
+    player = minetest.get_player_by_name(playerName)
+      or logistica.create_fake_player(playerName, pos, {wielded_item = toolStack})
+  end
 
   local def = minetest.registered_nodes[node.name]
   if def and (not def.diggable or (def.can_dig and not def.can_dig(vector.copy(pos), player))) then
@@ -268,11 +275,33 @@ function logistica.set_node_tooltip_from_state(pos, extraText, overrideState)
   meta:set_string("infotext", text)
 end
 
+function logistica.is_pos_infinite(pos)
+  return minetest.get_meta(pos):get_string(META_INFINITE_KEY) == "1"
+end
+
+-- toggles the infinite flag at pos and returns the new state (true/false)
+function logistica.toggle_pos_infinite(pos)
+  local meta = minetest.get_meta(pos)
+  local newState = not logistica.is_pos_infinite(pos)
+  meta:set_string(META_INFINITE_KEY, newState and "1" or "")
+  return newState
+end
+
 function logistica.append_makes_infotext(pos, itemstack)
   local meta = minetest.get_meta(pos)
   local existing = meta:get_string("infotext")
   existing = existing:gsub("\nMakes: [^\n]*$", "")
   local desc = (not itemstack:is_empty()) and ("\nMakes: " .. itemstack:get_short_description()) or ""
+  meta:set_string("infotext", existing .. desc)
+end
+
+function logistica.append_recipe_infotext(pos, inputStack, outputStack)
+  local meta = minetest.get_meta(pos)
+  local existing = meta:get_string("infotext")
+  existing = existing:gsub("\nRecipe: [^\n]*$", "")
+  local desc = (not outputStack:is_empty())
+    and ("\nRecipe: "..inputStack:get_short_description().." -> "..outputStack:get_short_description())
+    or ""
   meta:set_string("infotext", existing .. desc)
 end
 

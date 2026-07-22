@@ -11,7 +11,7 @@ Controllers allow you to rename the network, but this is for visual identificati
 g.access_point = S([[
 The Access Point provides easy access to all Storage devices connected to the Network.
 
-It can both take and insert items into the network's storage. It provides a Crafting Grid built into it for convenience.
+It can both take and insert items into the network's storage.
 
 You can also access an Access Point and all its features remotely using a Wireless Access Pad synced to the Access Point.
 
@@ -53,6 +53,23 @@ To withdraw a liquid, first select which liquid you want, then put an Empty Buck
 Taking items from the Network
 ------------------------------
 The Access Point shows a snapshot of available items, or items supplied by crafting suppliers. When you try to take an item, the Access Point makes a real request to the network. If the items are no longer available, you won't receive anything. In most cases the Access Point will try to show an error message informing what went wrong.
+
+Depositing items into the Network
+------------------------------
+Below the Filter and Sort sections are Deposit buttons that let you empty your inventory into the network in one click:
+
+- All: deposits your inventory into any device that will accept it - Requesters, Mass Storage, and Supply Chests, in that order.
+- In Mass Storage: deposits only into Mass Storage units on the network.
+- In Supply Chests: deposits only into Supply Chests on the network.
+- In Tool Chests: deposits only into Tool Chests on the network.
+
+Any items that can't be deposited by a given button are left in your inventory.
+
+Trash slot
+------------------------------
+Below the player inventory is a Trash slot and a Last Deleted Item slot. Any item put into the Trash slot is immediately deleted, and a copy is moved into the Last Deleted Item slot.
+
+The Last Deleted Item slot only holds the most recently deleted item - putting another item into the Trash slot will permanently lose whatever was previously in the Last Deleted Item slot.
 ]])
 
 g.access_point_storage = S([[
@@ -337,6 +354,18 @@ These machines also work recursively: if you have multiple Crafting Suppliers se
 These machines also interface with the Access Point and Wireless Access Pad, so you can take items that aren't stored on your network and they will be crafted by the Crafting Supplier for you!
 ]])
 
+g.cooking_supplier = S([[
+The Cooking Supplier is an on-demand supplier that cooks items instantly, instead of waiting on a furnace's cook time.
+
+It holds an internal tank of up to 2 buckets of lava, refilled from the network through any connected Reservoir. While turned on, it draws from that tank once per second to build up a Time Charge, up to a maximum of 10 seconds.
+
+Specify an item you want cooked, and the resulting output will be provided to the network, similar to a Crafting Supplier. Any excess produced beyond what was requested is kept in the 8 slots below as a passive supply.
+
+Cooking an item instantly spends Time Charge equal to that item's normal cook time. If there isn't enough Time Charge accumulated, the Cooking Supplier simply can't fulfil the request until more builds up. Items whose cook time exceeds the 10 second maximum cannot be configured at all.
+
+Only recognizes regular cooking recipes. Recipes that require an additive are not supported and still need a Lava Furnace.
+]])
+
 g.autocrafter = S([[
 The Autocrafter is simple a non-network machine that simply crafts from its input to the output. It does not interface directly with a network but can be accessed by both Network Importers and Request Inserters to feed it to/from the network.
 ]])
@@ -402,6 +431,17 @@ The Vacuum Supply Chest acts like a regular Supply chest, providing items to the
 The on/off switch in the Vacuum Chests's inventory enables whether the chest will be collecting nearby items or not.
 
 The Vacuum Chest also has a filter row. If any filter slots are filled, the chest will only pick up items matching those filters. If all filter slots are empty, the chest will pick up all nearby items.
+]])
+
+g.requester_programmer = S([[
+The Requester Programmer remotely sets the filter and request amounts of the Requester it's facing (its back face must point at the Requester).
+
+- Has 4 signal-triggered rows plus 1 default row, each with its own 8 item slots and per-slot request amounts.
+- Right-click to configure: set a signal name on rows 1-4, fill in items and amounts, then Save.
+- Whichever active row has the lowest number wins (row 1 beats row 3 if both signals are on).
+- The default row (5) applies only when none of the 4 signals are ON.
+- Saving, or any change in one of its configured signals, immediately rewrites the target Requester's filter and amounts.
+- Always relays the network connection through to whatever is behind it, same as a Signal Network Switch left permanently on.
 ]])
 
 g.rock_melter = S([[

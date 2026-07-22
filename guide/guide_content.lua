@@ -25,8 +25,10 @@ local PAGE_BUCKET_EMPTIER = "mbckemp"
 local PAGE_BUCKET_FILLER = "mbckfil"
 local PAGE_WIRELESS_UPGRADER = "mwrlup"
 local PAGE_CRAFTING_SUPPLIER = "mcrftsup"
+local PAGE_COOKING_SUPPLIER = "mcooksup"
 local PAGE_AUTOCRAFTER = "mautocrf"
 local PAGE_VACCUUM_CHEST = "mvacchs"
+local PAGE_REQUESTER_PROGRAMMER = "mreqprog"
 local PAGE_FARMING_SUPPLIER = "mfarmsup"
 local PAGE_SPRINKLER_UPGRADE = "isprinkup"
 local PAGE_WOODCUTTER = "mwoodcut"
@@ -47,6 +49,8 @@ local PAGE_COBBLE_GENERATOR_UPGR = "cbgnup"
 local PAGE_WIRELESS_ACCESS_PAD = "iwrlap"
 local PAGE_HYPERSPANNER = "ihyper"
 local PAGE_STATE_COPIER = "istatcp"
+local PAGE_INF_WAND = "iinfwnd"
+local PAGE_WAND = "iinvwnd"
 
 local PAGE_SILVERIN_CRYSTAL = "isilcry"
 local PAGE_SILVERIN_SLICE = "isilsli"
@@ -123,10 +127,12 @@ local RECIPE_RESERVOR = getrec({L("reservoir_obsidian_empty"), L("reservoir_silv
 local RECIPE_RESERPMP = getrec({L("pump")})
 local RECIPE_WRLUPGRD = getrec({L("wireless_synchronizer")})
 local RECIPE_CRAFTSUP = getrec({L("crafting_supplier")})
+local RECIPE_COOKSUP = getrec({L("cooking_supplier")})
 local RECIPE_AUTOCRFT = getrec({L("autocrafter")})
 local RECIPE_BUCKFILL = getrec({L("bucket_filler")})
 local RECIPE_BUCKEMPT = getrec({L("bucket_emptier")})
 local RECIPE_VACCUUMC = getrec({L("vaccuum_chest")})
+local RECIPE_REQPROGRAMMER = getrec({L("requester_programmer_on")})
 local RECIPE_FARMSUP = getrec({L("farming_supplier")})
 local RECIPE_SPRINKUP = getrec({L("sprinkler_upgrade")})
 local RECIPE_WOODCUT  = getrec({L("woodcutter")})
@@ -261,6 +267,7 @@ local RECIPE_LINKS = {
   [L("farming_supplier")] = PAGE_FARMING_SUPPLIER,
   [L("disassembler")] = PAGE_DISASSEMBLER,
   [L("item_monitor")] = PAGE_ITEM_MONITOR,
+  [L("requester_programmer_on")] = PAGE_REQUESTER_PROGRAMMER,
 
 }
 
@@ -320,6 +327,7 @@ logistica.GuideApi.register(GUIDE_NAME, {
     { name = S("  Bucket Emptier"), id = PAGE_BUCKET_EMPTIER },
     { name = header(S("Autocrafting:"))},
     { name = S("  Crafting Supplier"), id = PAGE_CRAFTING_SUPPLIER },
+    { name = S("  Cooking Supplier"), id = PAGE_COOKING_SUPPLIER },
     { name = S("  Autocrafter"), id = PAGE_AUTOCRAFTER },
     { name = header(S("Signals:"))},
     { name = S("  Signals Overview"), id = PAGE_SIGNALS_OVERVIEW },
@@ -351,6 +359,7 @@ logistica.GuideApi.register(GUIDE_NAME, {
     { name = S("  Leafcutter Upgrade"), id = PAGE_LEAVES_UPGRADE },
     { name = header(S("Utility Machines:"))},
     { name = S("  Vacuum Chest"), id = PAGE_VACCUUM_CHEST },
+    { name = S("  Requester Programmer"), id = PAGE_REQUESTER_PROGRAMMER },
     { name = S("  Lava Furnace Fueler"), id = PAGE_LAVA_FUELER },
     { name = S("  Rock Melter"), id = PAGE_ROCK_MELTER },
     { name = S("  Cobble Generator"), id = PAGE_COBBLE_GENERATOR },
@@ -363,6 +372,9 @@ logistica.GuideApi.register(GUIDE_NAME, {
     { name = header(S("Tools:"))},
     { name = S("  Hyperspanner"), id = PAGE_HYPERSPANNER },
     { name = S("  State Copy Tool"), id = PAGE_STATE_COPIER },
+    { name = header(S("Admin Tools:")), requiredPrivs = {"give", "server"} },
+    { name = S("  Infinite Wand"), id = PAGE_INF_WAND, requiredPrivs = {"give", "server"} },
+    { name = S("  Inv List Scanner"), id = PAGE_WAND, requiredPrivs = {"give", "server"} },
     { name = header(S("Items:"))},
     { name = S("  Silverin Crystal"), id = PAGE_SILVERIN_CRYSTAL },
     { name = S("  Silverin Slice"), id = PAGE_SILVERIN_SLICE },
@@ -577,6 +589,14 @@ logistica.GuideApi.register(GUIDE_NAME, {
       description = desc.crafting_supplier,
     },
 
+    [PAGE_COOKING_SUPPLIER] = {
+      title = S("Cooking Supplier"),
+      relatedItems = {L("lava_furnace")},
+      recipes = RECIPE_COOKSUP,
+      recipeLinks = RECIPE_LINKS,
+      description = desc.cooking_supplier,
+    },
+
     [PAGE_AUTOCRAFTER] = {
       title = S("Autocrafter"),
       recipes = RECIPE_AUTOCRFT,
@@ -591,6 +611,14 @@ logistica.GuideApi.register(GUIDE_NAME, {
       recipes = RECIPE_VACCUUMC,
       recipeLinks = RECIPE_LINKS,
       description = desc.vaccuum_chest,
+    },
+
+    [PAGE_REQUESTER_PROGRAMMER] = {
+      title = S("Requester Programmer"),
+      relatedItems = {L("requester_item"), L("requester_stack")},
+      recipes = RECIPE_REQPROGRAMMER,
+      recipeLinks = RECIPE_LINKS,
+      description = desc.requester_programmer,
     },
 
     [PAGE_FARMING_SUPPLIER] = {
@@ -701,6 +729,18 @@ logistica.GuideApi.register(GUIDE_NAME, {
       recipes = RECIPE_STATECPY,
       recipeLinks = RECIPE_LINKS,
       description = desc.state_copier,
+    },
+
+    -- admin tools
+
+    [PAGE_INF_WAND] = {
+      title = S("Infinite Wand"),
+      description = desc.inf_wand,
+    },
+
+    [PAGE_WAND] = {
+      title = S("Inv List Scanner"),
+      description = desc.wand,
     },
 
     -- items

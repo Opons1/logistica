@@ -161,6 +161,18 @@ logistica.register_crafting_supplier(S("Crafting Supplier"), "crafting_supplier"
 })
 
 --------------------------------
+-- Cooking Supplier
+--------------------------------
+
+if logistica.settings.enable_cooking_supplier then
+  logistica.register_cooking_supplier(S("Cooking Supplier"), "cooking_supplier", {
+    "logistica_cooking_supplier_top.png",
+    "logistica_crafting_supplier_bottom.png",
+    "logistica_cooking_supplier_side.png",
+  })
+end -- enable_cooking_supplier
+
+--------------------------------
 -- Network Importer
 --------------------------------
 
@@ -298,6 +310,25 @@ local function ins_tiles(lname) return {
 
 logistica.register_requester(S("Item Request Inserter\nInserts 1 item at a time"), "requester_item", 1, ins_tiles("item"))
 logistica.register_requester(S("Bulk Request Inserter\nInserts up to 64 items at a time"), "requester_stack", 64, ins_tiles("stack"))
+
+--------------------------------
+-- Requester Programmer
+--------------------------------
+
+if logistica.settings.enable_requester_programmer then
+  logistica.register_requester_programmer(
+    S("Requester Programmer"),
+    "requester_programmer",
+    {
+      "logistica_requester_programmer_side.png^[transformR270",
+      "logistica_requester_programmer_side.png^[transformR90",
+      "logistica_requester_programmer_side.png^[transformR180",
+      "logistica_requester_programmer_side.png",
+      "logistica_requester_programmer_back.png",
+      "logistica_signal_toggler_front.png",
+    }
+  )
+end
 
 --------------------------------
 -- Reservoirs
