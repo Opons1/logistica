@@ -6,10 +6,30 @@ local INV_CRAFT = "crf"
 local INV_CRAFT_RES = "crfres"
 
 local ON_OFF_BTN = "onffbtn"
+local META_SHOW_ITEM = "show_item"
 
 local TIMER_SHORT = 1.0
 local TIMER_LONG = 3.0
 
+
+local function get_show_item(pos)
+  return minetest.get_meta(pos):get_int(META_SHOW_ITEM) == 1
+end
+
+local function set_show_item(pos, shouldShow)
+  minetest.get_meta(pos):set_int(META_SHOW_ITEM, shouldShow and 1 or 0)
+end
+
+-- `newParam2` is optional, will override the lookup of node.param2 for rotation
+local function update_front_image(pos, newParam2)
+  logistica.remove_item_on_block_front(pos)
+  if not get_show_item(pos) then return end
+  local item = minetest.get_meta(pos):get_inventory():get_stack(INV_CRAFT_RES, 1)
+  logistica.display_item_on_block_front(pos, item:get_name(), newParam2)
+end
+
+local DISPLAY_UPDATE_DEBOUNCE_S = 0.2
+local pendingDisplayUpdates = {}
 
 local function update_craft_output(pos, inv)
   local inputList = logistica.get_list(inv, INV_CRAFT)
@@ -21,29 +41,51 @@ local function update_craft_output(pos, inv)
   local item = out and out.item or ItemStack("")
   inv:set_stack(INV_CRAFT_RES, 1, item)
   logistica.append_makes_infotext(pos, item)
+
+  -- the front-image update involves an entity respawn (get_objects_inside_radius + add_entity),
+  -- which is expensive if triggered on every single inventory click/timer tick, so debounce it
+  local hash = minetest.hash_node_position(pos)
+  if pendingDisplayUpdates[hash] then return end
+  pendingDisplayUpdates[hash] = minetest.after(DISPLAY_UPDATE_DEBOUNCE_S, function()
+    pendingDisplayUpdates[hash] = nil
+    update_front_image(pos)
+  end)
+end
+
+local function cancel_pending_display_update(pos)
+  local hash = minetest.hash_node_position(pos)
+  local job = pendingDisplayUpdates[hash]
+  if job then
+    job:cancel()
+    pendingDisplayUpdates[hash] = nil
+  end
 end
 
 --------------------------------
 -- Formspec
 --------------------------------
 
+local SHOW_ITEM_TOOLTIP = FS("Show the crafted item on the front of this node")
+
 local function get_formspec(pos, _isOn)
   local isOn = _isOn
   if isOn == nil then isOn = logistica.is_machine_on(pos) end
+  local showStr = get_show_item(pos) and "true" or "false"
   return "formspec_version[4]"..
     "size["..logistica.inv_size(10.5, 13.25).."]" ..
     logistica.ui.background_lava_furnace..
     "listcolors[#00000069;#5A5A5A;#141318;#30434C;#FFF]"..
-    "listring[context;INV_MAIN]"..
     "list[context;src;0.4,5;8,2;0]"..
     logistica.player_inv_formspec(0.4,7.8)..
     "list[context;dst;5.5,0.6;4,3;0]"..
     "list[context;crf;0.2,0.6;3,3;0]"..
     "list[context;crfres;3.9,1.85;1,1;0]"..
+    "checkbox[3.8,1.45;show_item;"..FS("Show")..";"..showStr.."]"..
+    "tooltip[show_item;"..SHOW_ITEM_TOOLTIP.."]"..
+    "listring[context;dst]"..
     "listring[current_player;main]"..
     "listring[context;src]"..
     "listring[current_player;main]"..
-    "listring[context;dst]"..
     "label[1.4,0.3;"..FS("Recipe").."]"..
     "label[7.3,0.3;"..FS("Output").."]"..
     "label[4.9,4.7;"..FS("Input").."]"..
@@ -57,7 +99,7 @@ end
 local function autocrafter_timer(pos, elapsed)
   local meta = minetest.get_meta(pos)
   local inv = meta:get_inventory()
-  local success = logistica.autocrafting_produce_single_item(inv, INV_CRAFT, INV_SRC, INV_DST)
+  local success = logistica.autocrafting_produce_single_item(inv, INV_CRAFT, INV_SRC, INV_DST, true)
   if success then logistica.start_node_timer(pos, TIMER_SHORT)
   else logistica.start_node_timer(pos, TIMER_LONG) end
   return false
@@ -72,9 +114,16 @@ local function autocrafter_on_construct(pos)
     inv:set_width(INV_CRAFT, 3)
     inv:set_size(INV_CRAFT_RES, 1)
     meta:set_string("formspec", get_formspec(pos))
+    logistica.set_node_tooltip_from_state(pos)
 end
 
 local function autocrafter_on_destruct(pos)
+  cancel_pending_display_update(pos)
+  logistica.remove_item_on_block_front(pos)
+end
+
+local function autocrafter_on_rotate(pos, node, player, mode, newParam2)
+  update_front_image(pos, newParam2)
 end
 
 local function autocrafter_can_dig(pos)
@@ -133,6 +182,11 @@ local function autocrafter_receive_fields(pos, formname, fields, sender)
   if fields[ON_OFF_BTN] then
     logistica.toggle_machine_on_off(pos)
   end
+  if fields.show_item then
+    set_show_item(pos, fields.show_item == "true")
+    update_front_image(pos)
+    minetest.get_meta(pos):set_string("formspec", get_formspec(pos))
+  end
 end
 
 local function autocrafter_on_power(pos, power)
@@ -171,6 +225,7 @@ function logistica.register_autocrafter(desc, name, tiles)
     allow_metadata_inventory_move = autocrafter_allow_metadata_inv_move,
     allow_metadata_inventory_take = autocrafter_allow_metadata_inv_take,
     on_receive_fields = autocrafter_receive_fields,
+    on_rotate = autocrafter_on_rotate,
     logistica = {
       on_power = autocrafter_on_power,
       on_paste_state = autocrafter_on_inv_change,
